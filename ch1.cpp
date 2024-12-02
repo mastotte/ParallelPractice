@@ -1,33 +1,37 @@
 #include <iostream>
+#include <mutex>
 #include <chrono>
 #include <random>
 #include <thread>
 #include <vector>
 using namespace std;
 
-typedef enum{THINKING = 0, HUNGRY = 1, EATING = 2};
+enum{THINKING = 0, HUNGRY = 1, EATING = 2};
 std::mutex table;
 class Chopstick{
 public:
     Chopstick() = default;
 
     void pickUp(){
-        m.lock();
+        
     }
 
     void putDown(){
-        m.unlock();
+
     }
 
-private:
-    std::mutex m;
-}
+};
 
-std::vector<Chopstick> chopsticks;
+std::vector <Chopstick*> chopsticks;
 
 void philosopher(int thread_id){
-    
-
+    table.lock();
+    chopsticks[thread_id]->pickUp();
+    chopsticks[(thread_id+1)%5]->pickUp();
+    // eat
+    chopsticks[thread_id]->putDown();
+    chopsticks[(thread_id+1)%5]->putDown();
+    table.unlock();
 }
 int main()
 {
